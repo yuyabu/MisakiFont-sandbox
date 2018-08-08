@@ -12,7 +12,7 @@ int main(){
     exit(EXIT_FAILURE);
   }
   char c;
-  for(int i=0;i<10;i++){
+  for(int i=0;i<12;i++){
     c = fgetc(fp);
     printf("%c\n",c);
   }
