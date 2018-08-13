@@ -1,4 +1,3 @@
-#define HEADER_SIZE 22
 
 typedef struct{
   char filesignature[6];
@@ -7,6 +6,14 @@ typedef struct{
   char font_h;
   char char_code_flg;
   char blocks;
+} fontx2header;
+
+typedef struct{
   char start_code[2];
   char end_code[2];
-} fontx2header;
+}bloack_table_entry;
+
+typedef char font_data[8];
+
+void print_font(font_data data);
+void printbincharpad(char c);
