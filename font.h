@@ -26,6 +26,8 @@ typedef struct{
   //  bloack_table_entry *block;
 }fontx2header_before;
 
+int block_size[tablesize];
+
 typedef bloack_table_entry test_table[];
 
 typedef char font_data[8];
