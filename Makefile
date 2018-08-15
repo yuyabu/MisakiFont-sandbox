@@ -1,2 +1,12 @@
+MAKE = make -r
+CC = gcc -W -Wall
+
 font:font.c font.h
-	gcc -W -Wall -o font font.c
+	$(CC) -o font font.c
+
+run:
+	$(MAKE) font
+	./font
+
+clean:
+	rm ./font
