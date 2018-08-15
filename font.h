@@ -1,5 +1,6 @@
 #define tablesize 92
 #define HEADER_SIZE 18
+#define LETTER_AMOUNT 55688 //該当FONTX2ファイル内のフォント数。美咲の場合この数
 
 typedef struct{
   char start_code[2];
@@ -26,11 +27,14 @@ typedef struct{
   //  bloack_table_entry *block;
 }fontx2header_before;
 
-int block_size[tablesize];
+
 
 typedef bloack_table_entry test_table[];
 
 typedef char font_data[8];
+
+int block_size[tablesize];
+font_data data[LETTER_AMOUNT];
 
 void print_font(font_data data);
 void printbincharpad(char c);
