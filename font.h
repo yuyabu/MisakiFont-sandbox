@@ -1,6 +1,6 @@
 #define tablesize 92
 #define HEADER_SIZE 18
-#define LETTER_AMOUNT 55688 //該当FONTX2ファイル内のフォント数。美咲の場合この数
+#define LETTER_AMOUNT 6962 //該当FONTX2ファイル内のフォント数。美咲の場合この数
 
 typedef struct{
   char start_code[2];

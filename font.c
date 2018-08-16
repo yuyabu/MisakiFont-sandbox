@@ -11,6 +11,7 @@ void toggle_endian(char v[2]);
 int block_potition(bloack_table_entry* table,char letter[2]);
 boolean comp_letter(char v1[2],char v2[2]);
 int char_2B_hex_minus(char minuend[2],char subtrahend[2]);
+void strcpy_font_data(font_data v1[],font_data v2[],int length);
 
 int main(){
   FILE *fp;
@@ -53,12 +54,57 @@ int main(){
     //   char_2B_hex_minus(header.block[i].end_code,
     //     header.block[i].start_code)+1);
     //
-
   }
 
+  //fread(data,sizeof(font_data),(sizeof(font_data)* LETTER_AMOUNT),fp);
 
-  char test_letter[2] = {0x97,0x44};
+
+  int buffer_size = 512;
+  font_data pBuffer[buffer_size];
+  int i=0;
+  printf("size of pBuffer is %lu\n",sizeof(pBuffer));
+  printf("size of one read is %lu\n",sizeof(pBuffer)/sizeof(font_data));
+  int rtn;
+  int rest = LETTER_AMOUNT;
+  int copy_size=512;
+  do{
+    //512文字づつコピーする。
+    //残りが512文字以下になった時の端数処理
+    if(rest < copy_size){
+      copy_size = rest;
+    }
+    printf("rest is %4d  copy %d chars pBuffer[0] to data[%d] \n",rest,copy_size,i);
+    rtn = fread(pBuffer, sizeof(font_data),sizeof(pBuffer)/sizeof(font_data), fp);
+    rest -= copy_size;
+
+
+    strcpy_font_data(data[i],pBuffer[0],copy_size);
+    // for(int j=0;j<buffer_size;j++){
+    //   //data[i+j]=pBuffer[j];
+    // }
+
+    i+=(buffer_size);
+
+  }
+  while (rtn);
+  printf("i is %d\n",i);
+  printf("rtn is %d\n",rtn);
+
+  // char pBuffer[4096];
+  // int i=0;
+  // while (fread(pBuffer, sizeof(char), sizeof(pBuffer), fp)) {
+  //   i++;
+  // }
+  // //4096  * 14 = 57344しか読めない
+  // //7680  * 8 = 61440
+  // // 55688
+  // printf("i is %d\n",i);
+
+
+
+  char test_letter[2] = {0xea,0xa4};
   int block_index= block_potition(header.block,test_letter);
+
   //文字が存在しているブロックの先頭まで、何文字あったか確認する
   int base = count_letters_untill_block(block_size,block_index);
 
@@ -68,12 +114,14 @@ int main(){
   int  tmp =HEADER_SIZE + tablesize * (sizeof(bloack_table_entry))
               + (base+offset) * (sizeof(font_data));
 
+  int tmp2 = (base+offset) * (sizeof(font_data));
   printf("tmp is %d\n",tmp);
+  printf("tmp2 is %d\n",tmp2);
+  //font_data fd;
+  //fd =  data[tmp2];
+
+  print_font(data[6961]);
   fclose(fp);
-
-
-
-
 
 // 憂憂    憂
 // 憂憂  憂憂憂
@@ -101,6 +149,9 @@ int main(){
 //     犬  犬
 // 犬犬      犬犬
 //
+//0xDB0A - 0x182
+//55688バイト
+//55688 / 8 = 6962文字
 
 
 
@@ -206,4 +257,17 @@ int char_2B_hex_minus(char minuend[2],char subtrahend[2]){
    */
   return (((int)minuend[0])*256 + (int)minuend[1]) -
     (((int)subtrahend[0])*256 + (int)subtrahend[1]);
+}
+/**
+ * copy font data v2 to v1
+ * @param v1     copy to
+ * @param v2     copy from
+ * @param length copy length
+ */
+void strcpy_font_data(font_data v1[],font_data v2[],int length){
+  for(int i=0;i<length;i++){
+    for(int j=0;j<8;j++){
+      v1[i][j] = v2[i][j];
+    }
+  }
 }
