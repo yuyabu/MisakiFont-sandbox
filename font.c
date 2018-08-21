@@ -23,6 +23,7 @@ int main(){
     exit(EXIT_FAILURE);
   };
 
+  //ヘッダの読み込み
   fontx2header header;
   fread(&header,HEADER_SIZE,1,fp);
 
@@ -31,6 +32,9 @@ int main(){
 
   fread(header.block,sizeof(bloack_table_entry)* block_amount,1,fp);
   for(int i=0;i<block_amount;i++){
+
+    //fontx2ファイルではヘッダがリトルエンディアンで格納されているため、
+    //こちらをビッグエンディアンに変換する
     toggle_endian(header.block[i].start_code);
     toggle_endian(header.block[i].end_code);
 
@@ -77,11 +81,8 @@ int main(){
     rtn = fread(pBuffer, sizeof(font_data),sizeof(pBuffer)/sizeof(font_data), fp);
     rest -= copy_size;
 
-
+    //読み取ったデータが格納されているpBufferからdataにフォントデータをコピーする
     strcpy_font_data(data[i],pBuffer[0],copy_size);
-    // for(int j=0;j<buffer_size;j++){
-    //   //data[i+j]=pBuffer[j];
-    // }
 
     i+=(buffer_size);
 
@@ -102,7 +103,7 @@ int main(){
 
 
 
-  char test_letter[2] = {0xea,0xa4};
+  char test_letter[2] = {0x90,0xcc};
   int block_index= block_potition(header.block,test_letter);
 
   //文字が存在しているブロックの先頭まで、何文字あったか確認する
@@ -114,14 +115,17 @@ int main(){
   int  tmp =HEADER_SIZE + tablesize * (sizeof(bloack_table_entry))
               + (base+offset) * (sizeof(font_data));
 
-  int tmp2 = (base+offset) * (sizeof(font_data));
+  int tmp2 = (base+offset);
   printf("tmp is %d\n",tmp);
   printf("tmp2 is %d\n",tmp2);
   //font_data fd;
   //fd =  data[tmp2];
 
-  print_font(data[6961]);
+  print_font(data[tmp2]);
   fclose(fp);
+
+
+
 
 // 憂憂    憂
 // 憂憂  憂憂憂
@@ -180,6 +184,7 @@ int block_potition(bloack_table_entry* table,char letter[2]){
     int biggest   = comp_letter(letter,table[i].end_code);
     if(smallest == TRUE && biggest == FALSE) return i;
   }
+  //エラー
   return -1;
 }
 
