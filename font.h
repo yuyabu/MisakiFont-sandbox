@@ -34,7 +34,11 @@ typedef bloack_table_entry test_table[];
 typedef char font_data[8];
 
 int block_size[tablesize];
-font_data data[LETTER_AMOUNT];
 
 void print_font(font_data data);
 void printbincharpad(char c);
+void get_font_date(char lette_code[2],font_data *dist);
+
+//global data
+font_data data[LETTER_AMOUNT];
+fontx2header header;

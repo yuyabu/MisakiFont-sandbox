@@ -13,18 +13,23 @@ boolean comp_letter(char v1[2],char v2[2]);
 int char_2B_hex_minus(char minuend[2],char subtrahend[2]);
 void strcpy_font_data(font_data v1[],font_data v2[],int length);
 
-int main(){
+/**
+ * フォントファイルを読み取りdataとしてメモリ上に展開し
+ * 利用する準備をする
+ * @return 結果(-1:失敗,0:成功)
+ */
+int init_font(){
+
   FILE *fp;
   char *filename = "MISAKI.FNT";
 
-  /*fnt file open*/
+  /*font file open*/
   if((fp = fopen(filename,"r"))==NULL){
     fprintf(stderr,"%s open faild.\n",filename);
     exit(EXIT_FAILURE);
   };
 
   //ヘッダの読み込み
-  fontx2header header;
   fread(&header,HEADER_SIZE,1,fp);
 
   int block_amount = (int)header.blocks;
@@ -66,13 +71,17 @@ int main(){
   int buffer_size = 512;
   font_data pBuffer[buffer_size];
   int i=0;
+
   printf("size of pBuffer is %lu\n",sizeof(pBuffer));
   printf("size of one read is %lu\n",sizeof(pBuffer)/sizeof(font_data));
+
   int rtn;
   int rest = LETTER_AMOUNT;
   int copy_size=512;
+
   do{
     //512文字づつコピーする。
+
     //残りが512文字以下になった時の端数処理
     if(rest < copy_size){
       copy_size = rest;
@@ -82,7 +91,8 @@ int main(){
     rest -= copy_size;
 
     //読み取ったデータが格納されているpBufferからdataにフォントデータをコピーする
-    strcpy_font_data(data[i],pBuffer[0],copy_size);
+    strcpy_font_data(&data[i],&pBuffer[0],copy_size);
+    //void strcpy_font_data(font_data v1[],font_data v2[],int length){
 
     i+=(buffer_size);
 
@@ -100,10 +110,41 @@ int main(){
   // //7680  * 8 = 61440
   // // 55688
   // printf("i is %d\n",i);
+  fclose(fp);
+
+  return -1;
+
+}
+
+void get_font_date(char lette_code[2],font_data * dist){
+  char test_letter[2] = {0x90,0xcc};
+  lette_code= test_letter;
+  int block_index= block_potition(header.block,lette_code);
+
+  //文字が存在しているブロックの先頭まで、何文字あったか確認する
+  int base = count_letters_untill_block(block_size,block_index);
+
+  //ブロックの先頭から何番目めに文字があるのか確認する
+  int offset = char_2B_hex_minus(lette_code,header.block[block_index].start_code);
+
+  //fontの位置を確定させる
+  int font_position = base+offset;
+
+  printf("font_position is %d\n",font_position);
+  //fontを位置も自分コピーする
+  strcpy_font_data(dist,&data[font_position],1);
+}
+
+int main(){
 
 
+  init_font();
 
   char test_letter[2] = {0x90,0xcc};
+
+  font_data test;
+  get_font_date(test_letter,&test);
+
   int block_index= block_potition(header.block,test_letter);
 
   //文字が存在しているブロックの先頭まで、何文字あったか確認する
@@ -112,20 +153,26 @@ int main(){
   //ブロックの先頭から何番目めに文字があるのか確認する
   int offset = char_2B_hex_minus(test_letter,header.block[block_index].start_code);
 
-  int  tmp =HEADER_SIZE + tablesize * (sizeof(bloack_table_entry))
-              + (base+offset) * (sizeof(font_data));
+  //
+  // int  tmp =HEADER_SIZE + tablesize * (sizeof(bloack_table_entry))
+  //             + (base+offset) * (sizeof(font_data));
 
-  int tmp2 = (base+offset);
-  printf("tmp is %d\n",tmp);
-  printf("tmp2 is %d\n",tmp2);
+  int font_position = (base+offset);
+
+
+  font_data result_data;
+
+
+  //fontを位置も自分コピーする
+  strcpy_font_data(&result_data,&data[font_position],1);
+  //result_data=  data[tmp2];
+
+  print_font(test);
+  printf("font_position is %d\n",font_position);
   //font_data fd;
   //fd =  data[tmp2];
 
-  print_font(data[tmp2]);
-  fclose(fp);
-
-
-
+  print_font(result_data);
 
 // 憂憂    憂
 // 憂憂  憂憂憂
@@ -200,7 +247,7 @@ void print_font(font_data data){
 }
 
 /**
- * 美咲フォント
+ * 美咲フォントのデータを一行分(8bit)書き込む
  * @param c [description]
  */
  void printbincharpad(char c){
