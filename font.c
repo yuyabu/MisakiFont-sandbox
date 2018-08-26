@@ -47,33 +47,11 @@ int init_font(){
     //何文字分のデータを管理しているか把握しておく必要がある
     block_size[i]=char_2B_hex_minus(header.block[i].end_code,
          header.block[i].start_code)+1;
-    //データ確認用
-    // printf("%3d:",i);
-    // printf("start=0x%2x%2x "
-    //  ,(unsigned char)header.block[i].start_code[0]
-    //  ,(unsigned char)header.block[i].start_code[1]
-    // );
-    //
-    // printf("end  =0x%2x%2x "
-    //   ,(unsigned char)header.block[i].end_code[0]
-    //   ,(unsigned char)header.block[i].end_code[1]
-    // );
-    //
-    // printf(" block size is %d\n",
-    //   char_2B_hex_minus(header.block[i].end_code,
-    //     header.block[i].start_code)+1);
-    //
   }
-
-  //fread(data,sizeof(font_data),(sizeof(font_data)* LETTER_AMOUNT),fp);
-
 
   int buffer_size = 512;
   font_data pBuffer[buffer_size];
   int i=0;
-
-  printf("size of pBuffer is %lu\n",sizeof(pBuffer));
-  printf("size of one read is %lu\n",sizeof(pBuffer)/sizeof(font_data));
 
   int rtn;
   int rest = LETTER_AMOUNT;
@@ -86,7 +64,6 @@ int init_font(){
     if(rest < copy_size){
       copy_size = rest;
     }
-    printf("rest is %4d  copy %d chars pBuffer[0] to data[%d] \n",rest,copy_size,i);
     rtn = fread(pBuffer, sizeof(font_data),sizeof(pBuffer)/sizeof(font_data), fp);
     rest -= copy_size;
 
@@ -98,27 +75,12 @@ int init_font(){
 
   }
   while (rtn);
-  printf("i is %d\n",i);
-  printf("rtn is %d\n",rtn);
-
-  // char pBuffer[4096];
-  // int i=0;
-  // while (fread(pBuffer, sizeof(char), sizeof(pBuffer), fp)) {
-  //   i++;
-  // }
-  // //4096  * 14 = 57344しか読めない
-  // //7680  * 8 = 61440
-  // // 55688
-  // printf("i is %d\n",i);
   fclose(fp);
-
-  return -1;
+  return 0;
 
 }
 
 void get_font_date(char lette_code[2],font_data * dist){
-  char test_letter[2] = {0x90,0xcc};
-  lette_code= test_letter;
   int block_index= block_potition(header.block,lette_code);
 
   //文字が存在しているブロックの先頭まで、何文字あったか確認する
@@ -129,8 +91,6 @@ void get_font_date(char lette_code[2],font_data * dist){
 
   //fontの位置を確定させる
   int font_position = base+offset;
-
-  printf("font_position is %d\n",font_position);
   //fontを位置も自分コピーする
   strcpy_font_data(dist,&data[font_position],1);
 }
@@ -140,70 +100,24 @@ int main(){
 
   init_font();
 
-  char test_letter[2] = {0x90,0xcc};
+  //char test_letter0[2] = {0x90,0xcc};
+
+  char test_letters[12][2] ={{0x94,0xfc}, {0x82,0xb5}, {0x82,0xa2}, {0x94,0xfc}, {0x8d,0xe7}, {0x83,0x74}, {0x83,0x48}, {0x83,0x93},{0x83,0x67}, {0x82,0xcc}, {0x90,0xa2}, {0x8a,0x45}};
+  for(int i=0;i<(int)sizeof(test_letters)/2;i++){
+    char test_letter0[2];
+    test_letter0[0] =  test_letters[i][0];
+    test_letter0[1] =  test_letters[i][1];
+    font_data print_test;
+    get_font_date(test_letter0,&print_test);
+    print_font(print_test);
+  }
+
+  char test_letter[2] = {0x9f,0x54};
 
   font_data test;
   get_font_date(test_letter,&test);
 
-  int block_index= block_potition(header.block,test_letter);
-
-  //文字が存在しているブロックの先頭まで、何文字あったか確認する
-  int base = count_letters_untill_block(block_size,block_index);
-
-  //ブロックの先頭から何番目めに文字があるのか確認する
-  int offset = char_2B_hex_minus(test_letter,header.block[block_index].start_code);
-
-  //
-  // int  tmp =HEADER_SIZE + tablesize * (sizeof(bloack_table_entry))
-  //             + (base+offset) * (sizeof(font_data));
-
-  int font_position = (base+offset);
-
-
-  font_data result_data;
-
-
-  //fontを位置も自分コピーする
-  strcpy_font_data(&result_data,&data[font_position],1);
-  //result_data=  data[tmp2];
-
   print_font(test);
-  printf("font_position is %d\n",font_position);
-  //font_data fd;
-  //fd =  data[tmp2];
-
-  print_font(result_data);
-
-// 憂憂    憂
-// 憂憂  憂憂憂
-// 憂  憂憂憂憂憂
-// 憂憂  憂  憂
-// 憂憂憂    憂憂
-// 憂      憂
-// 憂  憂憂憂憂憂
-
-
-//   鬱  鬱  鬱
-// 鬱鬱鬱  鬱鬱鬱
-//   鬱鬱鬱鬱鬱
-// 鬱鬱鬱鬱鬱  鬱
-// 鬱鬱鬱鬱  鬱
-//   鬱        鬱
-//   鬱鬱鬱  鬱
-
-
-//       犬  犬
-//       犬
-// 犬犬犬犬犬犬犬
-//       犬
-//       犬
-//     犬  犬
-// 犬犬      犬犬
-//
-//0xDB0A - 0x182
-//55688バイト
-//55688 / 8 = 6962文字
-
 
 
 
@@ -243,7 +157,7 @@ void print_font(font_data data){
   for(int i=0;i<8;i++){
     printbincharpad(data[i]);
   }
-  puts("\n");
+  //puts("\n");
 }
 
 /**
