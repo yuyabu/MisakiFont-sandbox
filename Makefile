@@ -2,11 +2,17 @@ MAKE = make -r
 CC = gcc -W -Wall
 
 font:font.c font.h
-	$(CC) -o font font.c
+	$(CC) -c font.c
+	ar -r mylib.a font.o
+
+sample:sample.c
+	$(CC) -o sample sample.c mylib.a
 
 run:
 	$(MAKE) font
-	./font
+	$(MAKE) sample
+	./sample
 
 clean:
 	rm ./font
+	rm ./sample
