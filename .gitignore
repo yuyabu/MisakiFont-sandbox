@@ -1,3 +1,13 @@
 font
 a.out
 misaki.dump
+sample
+mylib.o
+mylib.a
+font.o
+.vscode/launch.json
+mylib.a
+font.o
+mylib.o
+sample
+.vscode/launch.json
