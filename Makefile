@@ -14,4 +14,4 @@ run:
 	./sample
 
 clean:
-	rm ./*.o *.a
+	rm ./*.o *.a sample
