@@ -5,7 +5,6 @@ int main(){
 
   init_font();
 
-  //char test_letter0[2] = {0x90,0xcc};
 
   char test_letters[12][2] ={
 	  {0x94,0xfc},//美
