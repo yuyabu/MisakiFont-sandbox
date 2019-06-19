@@ -13,7 +13,7 @@ int main(){
     test_letter0[0] =  test_letters[i][0];
     test_letter0[1] =  test_letters[i][1];
     font_data print_test;
-    get_font_date(test_letter0,&print_test);
+    get_font_data(test_letter0,&print_test);
     print_font(print_test);
   }
 } 

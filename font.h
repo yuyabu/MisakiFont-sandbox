@@ -37,7 +37,7 @@ int block_size[tablesize];
 
 void print_font(font_data data);
 void printbincharpad(char c);
-void get_font_date(char lette_code[2],font_data *dist);
+void get_font_data(char lette_code[2],font_data *dist);
 
 //global data
 font_data data[LETTER_AMOUNT];
