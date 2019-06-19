@@ -14,5 +14,4 @@ run:
 	./sample
 
 clean:
-	rm ./font
-	rm ./sample
+	rm ./*.o *.a
