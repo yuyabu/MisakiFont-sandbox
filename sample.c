@@ -16,11 +16,4 @@ int main(){
     get_font_date(test_letter0,&print_test);
     print_font(print_test);
   }
-
-  char test_letter[2] = {0x9f,0x54};
-
-  font_data test;
-  get_font_date(test_letter,&test);
-
-  print_font(test);
-}
+} 

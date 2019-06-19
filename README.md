@@ -2,6 +2,26 @@
 
 ## how to use
 
+1.get charcode whitch you want to display with misaki font.
+
+```
+$ echo '美しい美咲フォントの世界' | nkf -s | hexdump
+0000000 fc94 b582 a282 fc94 e78d 7483 4883 9383
+0000010 6783 cc82 a290 458a 000a               
+0000019
+```
+
+note:Character code:shift jis
+
+2.change code sample.c
+
+```
+  char test_letters[12][2] ={{0x94,0xfc}, {0x82,0xb5}, {0x82,0xa2}, {0x94,0xfc}, {0x8d,0xe7}, {0x83,0x74}, {0x83,0x48}, {0x83,0x93},{0x83,0x67}, {0x82,0xcc}, {0x90,0xa2}, {0x8a,0x45}};
+
+```
+
+3.execute following command
+
 ```
 make run
 ```
@@ -105,14 +125,5 @@ results
 10101010
 01001000
 00000000
-01010100
-11101110
-01111100
-11111010
-11110100
-01000010
-01110100
-00000000
-
 ```
 
